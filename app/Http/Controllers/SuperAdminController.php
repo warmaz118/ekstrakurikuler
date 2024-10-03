@@ -12,13 +12,5 @@ class SuperAdminController extends Controller
     {
         return view('superadmin.index');
     }
-    public function users()
-    {
-        // Ambil semua pengguna dengan relasi role
-        $users = User::with('roles')->get();
-
-        // Kirim data ke view
-        return view('superadmin.users', compact('users'));
-    }
 
 }

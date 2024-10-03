@@ -9,6 +9,7 @@ use App\Http\Controllers\SiswaSMPController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\PembimbingSMAController;
 use App\Http\Controllers\PembimbingSMPController;
+use App\Http\Controllers\SuperAdminUserController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -26,9 +27,14 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 // Rute yang dilindungi
-Route::middleware(['auth', 'role:Super Admin'])->group(function () {
-    Route::get('/superadmin', [SuperAdminController::class, 'index'])->name('superadmin.index');
-    Route::get('/superadmin/users', [SuperAdminController::class, 'users'])->name('superadmin.users');
+Route::prefix('superadmin')->middleware(['auth', 'role:Super Admin'])->group(function () {
+    Route::get('', [SuperAdminController::class, 'index'])->name('superadmin.index');
+    Route::get('/users', [SuperAdminUserController::class, 'index'])->name('superadmin.users.index');
+    Route::get('/users/create', [SuperAdminUserController::class, 'create'])->name('superadmin.users.create');
+    Route::post('/users', [SuperAdminUserController::class, 'store'])->name('superadmin.users.store');
+    Route::get('/users/{user}/edit', [SuperAdminUserController::class, 'edit'])->name('superadmin.users.edit');
+    Route::put('/users/{user}', [SuperAdminUserController::class, 'update'])->name('superadmin.users.update');
+    Route::delete('/users/{user}', [SuperAdminUserController::class, 'destroy'])->name('superadmin.users.destroy');
 });
 // Route untuk Admin SMP
 Route::middleware(['auth', 'role:Admin SMP'])->group(function () {
