@@ -14,20 +14,44 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+{
+    $credentials = $request->only('email', 'password');
 
-        // Menggunakan Laravel's Auth untuk melakukan login
-        if (Auth::attempt($request->only('email', 'password'))) {
-            // Jika login berhasil, redirect ke halaman yang sesuai
-            return redirect()->intended('home');
+    if (Auth::attempt($credentials)) {
+        $user = Auth::user();
+        $roles = $user->roles; // Dapatkan semua role user
+        
+        if ($roles->isNotEmpty()) {
+            // Asumsikan user memiliki satu role (misalnya yang pertama)
+            $role = $roles->first()->name;
+            
+            // Redirect berdasarkan role
+            switch($role) {
+                case 'Super Admin':
+                    return redirect()->route('superadmin.index');
+                case 'Admin SMP':
+                    return redirect()->route('admin.smp.index');
+                case 'Admin SMA':
+                    return redirect()->route('admin.sma.index');
+                case 'Pembimbing SMP':
+                    return redirect()->route('pembimbing.smp.index');
+                case 'Pembimbing SMA':
+                    return redirect()->route('pembimbing.sma.index');
+                case 'Siswa SMP':
+                    return redirect()->route('siswa.smp.index');
+                case 'Siswa SMA':
+                    return redirect()->route('siswa.sma.index');
+                default:
+                    return redirect()->route('home');
+            }
+        } else {
+            return redirect()->route('home')->withErrors(['error' => 'Role tidak ditemukan']);
         }
-
-        return back()->withErrors(['email' => 'Invalid credentials']);
+    } else {
+        return back()->withErrors(['email' => 'Invalid credentials.']);
     }
+}
+
 
     public function logout()
     {
