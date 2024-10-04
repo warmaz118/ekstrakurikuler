@@ -66,6 +66,7 @@ Route::prefix('superadmin')->middleware(['auth', 'role:Super Admin'])->group(fun
 // Route untuk Admin SMP
 Route::middleware(['auth', 'role:Admin SMP'])->group(function () {
     Route::get('/admin-smp', [AdminSMPController::class, 'index'])->name('admin.smp.index');
+});
 
 // Route untuk Admin SMA
 Route::middleware(['auth', 'role:Admin SMA'])->group(function () {
