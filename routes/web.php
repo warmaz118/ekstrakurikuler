@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminSMAController;
@@ -12,6 +13,32 @@ use App\Http\Controllers\PembimbingSMPController;
 use App\Http\Controllers\SuperAdminUserController;
 
 Route::get('/', function () {
+    // Jika pengguna sudah login, arahkan berdasarkan role
+    if (Auth::check()) {
+        $user = Auth::user();
+        $userRoles = $user->roles->pluck('name')->toArray();
+
+        if (in_array('Super Admin', $userRoles)) {
+            return redirect()->route('superadmin.index');
+        } elseif (in_array('Admin SMA', $userRoles)) {
+            return redirect()->route('admin.sma.index');
+        } elseif (in_array('Admin SMP', $userRoles)) {
+            return redirect()->route('admin.smp.index');
+        } elseif (in_array('Pembimbing SMA', $userRoles)) {
+            return redirect()->route('pembimbing.sma.index');
+        } elseif (in_array('Pembimbing SMP', $userRoles)) {
+            return redirect()->route('pembimbing.smp.index');
+        } elseif (in_array('Siswa SMA', $userRoles)) {
+            return redirect()->route('siswa.sma.index');
+        } elseif (in_array('Siswa SMP', $userRoles)) {
+            return redirect()->route('siswa.smp.index');
+        }
+
+        // Jika tidak ada role yang cocok, arahkan ke home
+        return redirect()->route('home');
+    }
+
+    // Jika belum login, arahkan ke halaman login
     return view('auth.login');
 });
 
@@ -22,8 +49,8 @@ Route::get('/home', function () {
 
 
 
-Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('login', [AuthController::class, 'login']);
+Route::get('login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
+Route::post('login', [AuthController::class, 'login'])->middleware('guest');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 // Rute yang dilindungi
@@ -37,8 +64,13 @@ Route::prefix('superadmin')->middleware(['auth', 'role:Super Admin'])->group(fun
     Route::delete('/users/{user}', [SuperAdminUserController::class, 'destroy'])->name('superadmin.users.destroy');
 });
 // Route untuk Admin SMP
-Route::middleware(['auth', 'role:Admin SMP'])->group(function () {
-    Route::get('/admin-smp', [AdminSMPController::class, 'index'])->name('admin.smp.index');
+Route::middleware(['auth', 'role:Siswa SMP'])->group(function () {
+    Route::get('/siswa-smp', [SiswaSMPController::class, 'index'])->name('siswa.smp.index');
+    Route::get('/siswa-smp/create', [SiswaSMPController::class, 'create'])->name('siswa.smp.create');
+    Route::post('/siswa-smp', [SiswaSMPController::class, 'store'])->name('siswa.smp.store');
+    Route::get('/siswa-smp/{id}/edit', [SiswaSMPController::class, 'edit'])->name('siswa.smp.edit');
+    Route::put('/siswa-smp/{id}', [SiswaSMPController::class, 'update'])->name('siswa.smp.update');
+    Route::delete('/siswa-smp/{id}', [SiswaSMPController::class, 'destroy'])->name('siswa.smp.destroy');
 });
 
 // Route untuk Admin SMA
