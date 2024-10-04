@@ -64,14 +64,8 @@ Route::prefix('superadmin')->middleware(['auth', 'role:Super Admin'])->group(fun
     Route::delete('/users/{user}', [SuperAdminUserController::class, 'destroy'])->name('superadmin.users.destroy');
 });
 // Route untuk Admin SMP
-Route::middleware(['auth', 'role:Siswa SMP'])->group(function () {
-    Route::get('/siswa-smp', [SiswaSMPController::class, 'index'])->name('siswa.smp.index');
-    Route::get('/siswa-smp/create', [SiswaSMPController::class, 'create'])->name('siswa.smp.create');
-    Route::post('/siswa-smp', [SiswaSMPController::class, 'store'])->name('siswa.smp.store');
-    Route::get('/siswa-smp/{id}/edit', [SiswaSMPController::class, 'edit'])->name('siswa.smp.edit');
-    Route::put('/siswa-smp/{id}', [SiswaSMPController::class, 'update'])->name('siswa.smp.update');
-    Route::delete('/siswa-smp/{id}', [SiswaSMPController::class, 'destroy'])->name('siswa.smp.destroy');
-});
+Route::middleware(['auth', 'role:Admin SMP'])->group(function () {
+    Route::get('/admin-smp', [AdminSMPController::class, 'index'])->name('admin.smp.index');
 
 // Route untuk Admin SMA
 Route::middleware(['auth', 'role:Admin SMA'])->group(function () {
