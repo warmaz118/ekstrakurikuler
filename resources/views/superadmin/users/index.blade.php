@@ -1,62 +1,199 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto mt-5">
-    <h1 class="text-2xl font-bold mb-4">Daftar Pengguna</h1>
-
-    @if(session('error'))
-    <div class="bg-red-500 text-white p-3 rounded mb-4">
-        {{ session('error') }}
-    </div>
-@endif
-
-
-    @if(session('success'))
-        <div class="bg-green-500 text-white p-3 rounded mb-4">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <table class="min-w-full bg-white border border-gray-200">
-        <thead>
-            <tr>
-                <th class="py-2 px-4 border-b">Name</th>
-                <th class="py-2 px-4 border-b">Email</th>
-                <th class="py-2 px-4 border-b">Roles</th>
-                <th class="py-2 px-4 border-b">Divisi</th>
-                <th class="py-2 px-4 border-b">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($users as $user)
-                <tr>
-                    <td class="py-2 px-4 border-b">{{ $user->name }}</td>
-                    <td class="py-2 px-4 border-b">{{ $user->email }}</td>
-                    <td class="py-2 px-4 border-b">
-                        @foreach($user->roles as $role)
-                            <span class="inline-block bg-blue-200 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">{{ $role->name }}</span>
-                        @endforeach
-                    </td>
-                    <td class="py-2 px-4 border-b">
-                        @foreach($user->divisi as $d)
-                            <span class="inline-block bg-green-200 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">{{ $d->nama }}</span>
-                        @endforeach
-                    </td>
-                    <td class="py-2 px-4 border-b">
-                        <a href="{{ route('superadmin.users.edit', $user->id) }}" class="text-blue-600 hover:text-blue-900">Edit</a>
-                        <form action="{{ route('superadmin.users.destroy', $user->id) }}" method="POST" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-900 ml-2">Delete</button>
+<!-- component -->
+<body class="antialiased font-sans bg-gray-200">
+    <div class="container mx-auto px-4 sm:px-8">
+        <div class="py-8">
+            <div>
+                <h2 class="text-2xl font-semibold leading-tight">Daftar Pengguna</h2>
+            </div>
+            <div class="my-2 flex sm:flex-row flex-col">
+                <div class="flex flex-row mb-1 sm:mb-0">
+                    <div class="relative">
+                        <form method="GET" action="{{ route('superadmin.users.index') }}">
+                            <select name="per_page"
+                                class="appearance-none h-full rounded-l border block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                onchange="this.form.submit()">
+                                <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                                <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
+                            </select>
                         </form>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    <div class="mt-4">
-        <a href="{{ route('superadmin.users.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Add User</a>
+                        
+                        <div
+                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <select
+                            class="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
+                            <option>All</option>
+                            <option>Active</option>
+                            <option>Inactive</option>
+                        </select>
+                        <div
+                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <form method="GET" action="{{ route('superadmin.users.index') }}" class="block relative">
+                    <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
+                        <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current text-gray-500">
+                            <path
+                                d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z">
+                            </path>
+                        </svg>
+                    </span>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search"
+                        class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none" />
+                </form>
+                <div class="ml-auto">
+                    <a href="{{ route('superadmin.users.create') }}"
+                       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
+                        <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path d="M10 0a10 10 0 100 20A10 10 0 0010 0zm1 10h3a1 1 0 010 2h-3v3a1 1 0 01-2 0v-3H6a1 1 0 010-2h3V7a1 1 0 012 0v3z"/>
+                        </svg>
+                        <span>Add User</span>
+                    </a>
+                </div>
+            </div> 
+            </div>
+            <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 overflow-x-auto">
+                <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
+                    @if(session('error'))
+                    <div id="error-message" class="bg-red-500 text-white p-3 rounded mb-4">
+                        {{ session('error') }}
+                    </div>
+                @endif
+                
+                
+                    @if(session('success'))
+                        <div id="success-message" class="bg-green-500 text-white p-3 rounded mb-4">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    
+                    <table class="min-w-full leading-normal">
+                        <thead>
+                            <tr>
+                                <th
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Name
+                                </th>
+                                <th
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Email
+                                </th>
+                                <th
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Roles
+                                </th>
+                                <th
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Divisi
+                                </th>
+                                <th
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($users as $user)
+                            <tr>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <div class="flex items-center">
+                                        {{-- <div class="flex-shrink-0 w-10 h-10">
+                                            <img class="w-full h-full rounded-full"
+                                                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
+                                                alt="" />
+                                        </div> --}}
+                                        <div class="ml-3">
+                                            <p class="text-gray-900 whitespace-no-wrap">
+                                                {{ $user->name }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <p class="text-gray-900 whitespace-no-wrap">{{ $user->email }}</p>
+                                </td>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    @foreach($user->roles as $role)
+                                    <span
+                                        class="relative inline-block px-3 py-1 font-semibold text-blue-900 leading-tight">
+                                        <span aria-hidden
+                                            class="absolute inset-0 bg-blue-200 opacity-50 rounded-full"></span>
+                                        <span class="relative">{{ $role->name }}</span>
+                                    </span>
+                                    @endforeach
+                                </td>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    @foreach($user->divisi as $d)
+                                    <span
+                                        class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+                                        <span aria-hidden
+                                            class="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
+                                        <span class="relative">{{ $d->nama }}</span>
+                                    </span>
+                                    @endforeach
+                                </td>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <a href="{{ route('superadmin.users.show', $user->id) }}" class="text-gray-500 hover:text-gray-100 mr-2">
+                                      <i class="material-icons-outlined text-base">visibility</i>
+                                    </a>
+                                    <a href="{{ route('superadmin.users.edit', $user->id) }}" class="text-yellow-400 hover:text-gray-100 mx-2">
+                                      <i class="material-icons-outlined text-base">edit</i>
+                                    </a>
+                                    <form action="{{ route('superadmin.users.destroy', $user->id) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                            <button type="submit" class="text-red-400 hover:text-gray-100 ml-2">
+                                                <i class="material-icons-round text-base">delete_outline</i>
+                                            </button>
+                                  </form>
+                                  </td>
+                            </tr>
+                           @endforeach
+                        </tbody>
+                    </table>
+                    <div
+                        class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between          ">
+                        <span class="text-xs xs:text-sm text-gray-900">
+                            Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} Entries
+                        </span>
+                        <div class="inline-flex mt-2 xs:mt-0">
+                            {{ $users->appends(['per_page' => request('per_page')])->links() }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</body>
+
+<script>
+    // Fungsi untuk menyembunyikan pesan flash setelah 10 detik (10000 ms)
+    setTimeout(function() {
+        var errorMessage = document.getElementById('error-message');
+        var successMessage = document.getElementById('success-message');
+
+        if (errorMessage) {
+            errorMessage.style.display = 'none';
+        }
+
+        if (successMessage) {
+            successMessage.style.display = 'none';
+        }
+    }, 5000); // 10000 ms = 10 detik
+</script>
+
+
 @endsection

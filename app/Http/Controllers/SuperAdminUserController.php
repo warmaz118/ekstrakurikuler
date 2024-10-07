@@ -11,11 +11,31 @@ use App\Models\Role; // Import model Role
 class SuperAdminUserController extends Controller
 {
     // Menampilkan daftar pengguna
-    public function index()
+    public function index(Request $request)
 {
-    $users = User::with(['roles', 'divisi'])->get(); // Ambil semua pengguna dengan relasi roles dan divisi
+    $perPage = $request->input('per_page', 5);
+    $search = $request->input('search'); // Menerima input pencarian
+
+    // Query pengguna dengan pagination dan pencarian
+    $users = User::with(['roles', 'divisi'])
+        ->whereDoesntHave('roles', function ($query) {
+            $query->whereIn('name', ['Super Admin', 'Siswa SMP', 'Siswa SMA']);
+        })
+        ->when($search, function ($query, $search) {
+            return $query->where('name', 'like', '%' . $search . '%')
+                         ->orWhere('email', 'like', '%' . $search . '%');
+        })
+        ->paginate($perPage); // Pagination, 10 item per halaman
+
     return view('superadmin.users.index', compact('users'));
 }
+
+    
+public function show(User $user)
+{
+    return view('superadmin.users.show', compact('user'));
+}
+
 
 
     // Menampilkan form untuk menambahkan pengguna

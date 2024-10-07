@@ -36,16 +36,6 @@ class UsersTableSeeder extends Seeder
                 'email' => 'pembimbing_sma@example.com',
                 'password' => Hash::make('password'),
             ],
-            [
-                'name' => 'Siswa SMP',
-                'email' => 'siswa_smp@example.com',
-                'password' => Hash::make('password'),
-            ],
-            [
-                'name' => 'Siswa SMA',
-                'email' => 'siswa_sma@example.com',
-                'password' => Hash::make('password'),
-            ],
         ];
 
         foreach ($users as $userData) {

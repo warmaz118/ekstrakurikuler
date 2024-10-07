@@ -14,13 +14,34 @@
             <i class="ri-arrow-right-s-line ml-auto group-[.selected]:rotate-90"></i>
         </a>
         <ul class="pl-7 mt-2 hidden group-[.selected]:block">
-            
+            @php
+                $user = auth()->user(); // Ambil pengguna yang sedang login
+            @endphp
             <li class="mb-4">
-                <a href="{{ route('superadmin.users.index') }}" class="text-gray-900 text-sm flex items-center hover:text-[#f84525] before:contents-[''] before:w-1 before:h-1 before:rounded-full before:bg-gray-300 before:mr-3">Users</a>
+                @if($user && $user->roles->contains('name', 'Super Admin') )
+                    <a href="{{ route('superadmin.users.index') }}" class="text-gray-900 text-sm flex items-center hover:text-[#f84525] before:contents-[''] before:w-1 before:h-1 before:rounded-full before:bg-gray-300 before:mr-3">Users</a>
+                @endif
             </li> 
            
             <li class="mb-4">
-                <a href="" class="text-gray-900 text-sm flex items-center hover:text-[#f84525] before:contents-[''] before:w-1 before:h-1 before:rounded-full before:bg-gray-300 before:mr-3">Siswa</a>
+                @if($user && $user->roles->contains('name', 'Admin SMA') )
+                    <a href="{{ route('siswasma.index') }}" class="text-gray-900 text-sm flex items-center hover:text-[#f84525] before:contents-[''] before:w-1 before:h-1 before:rounded-full before:bg-gray-300 before:mr-3">Siswa SMA</a>
+                @endif
+            </li> 
+            <li class="mb-4">
+                @if($user && $user->roles->contains('name', 'Admin SMP') )
+                    <a href="{{ route('siswasmp.index') }}" class="text-gray-900 text-sm flex items-center hover:text-[#f84525] before:contents-[''] before:w-1 before:h-1 before:rounded-full before:bg-gray-300 before:mr-3">Siswa SMP</a>
+                @endif
+            </li> 
+            <li class="mb-4">
+                @if($user && $user->roles->count() == 1 && $user->roles->first()->name == 'Admin SMA' )
+                    <a href="{{ route('pembimbingsma.index') }}" class="text-gray-900 text-sm flex items-center hover:text-[#f84525] before:contents-[''] before:w-1 before:h-1 before:rounded-full before:bg-gray-300 before:mr-3">Pembimbing SMA</a>
+                @endif
+            </li> 
+            <li class="mb-4">
+                @if($user && $user->roles->count() == 1 && $user->roles->first()->name == 'Admin SMP' )
+                    <a href="{{ route('pembimbingsmp.index') }}" class="text-gray-900 text-sm flex items-center hover:text-[#f84525] before:contents-[''] before:w-1 before:h-1 before:rounded-full before:bg-gray-300 before:mr-3">Pembimbing SMP</a>
+                @endif
             </li> 
         </ul>
     </li>

@@ -10,12 +10,18 @@ class CreateSiswaTable extends Migration
     {
         Schema::create('siswa', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id'); // user_id sebagai foreign key
             $table->string('nis')->unique();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('kelas');
-            $table->text('alamat')->nullable();
+            $table->string('alamat');
+            $table->unsignedBigInteger('divisi_id');
             $table->timestamps();
+        
+            // Foreign key constraints
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('divisi_id')->references('id')->on('divisi')->onDelete('cascade');
         });
+        
     }
 
     public function down()

@@ -34,17 +34,17 @@ class AuthController extends Controller
                 case 'Super Admin':
                     return redirect()->route('superadmin.index');
                 case 'Admin SMP':
-                    return redirect()->route('admin.smp.index');
+                    return redirect()->route('adminsmp.index');
                 case 'Admin SMA':
-                    return redirect()->route('admin.sma.index');
+                    return redirect()->route('adminsma.index');
                 case 'Pembimbing SMP':
-                    return redirect()->route('pembimbing.smp.index');
+                    return redirect()->route('pembimbingsmp.index');
                 case 'Pembimbing SMA':
-                    return redirect()->route('pembimbing.sma.index');
+                    return redirect()->route('pembimbingsma.index');
                 case 'Siswa SMP':
-                    return redirect()->route('siswa.smp.index');
+                    return redirect()->route('siswasmp.index');
                 case 'Siswa SMA':
-                    return redirect()->route('siswa.sma.index');
+                    return redirect()->route('siswasma.index');
                 default:
                     return redirect()->route('home');
             }

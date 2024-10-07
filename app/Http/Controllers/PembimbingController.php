@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class AdminSMPController extends Controller
+class PembimbingController extends Controller
 {
     public function index()
     {
-        return view('admin.indexsmp');
+        return view('pembimbing.index');
     }
 }

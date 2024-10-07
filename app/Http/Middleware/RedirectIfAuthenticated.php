@@ -17,17 +17,17 @@ class RedirectIfAuthenticated
             if (in_array('Super Admin', $userRoles)) {
                 return redirect()->route('superadmin.index');
             } elseif (in_array('Admin SMA', $userRoles)) {
-                return redirect()->route('admin.sma.index');
+                return redirect()->route('adminsma.index');
             } elseif (in_array('Admin SMP', $userRoles)) {
-                return redirect()->route('admin.smp.index');
+                return redirect()->route('adminsmp.index');
             } elseif (in_array('Pembimbing SMA', $userRoles)) {
-                return redirect()->route('pembimbing.sma.index');
+                return redirect()->route('pembimbingsma.index');
             } elseif (in_array('Pembimbing SMP', $userRoles)) {
-                return redirect()->route('pembimbing.smp.index');
+                return redirect()->route('pembimbingsmp.index');
             } elseif (in_array('Siswa SMA', $userRoles)) {
-                return redirect()->route('siswa.sma.index');
+                return redirect()->route('siswasma.index');
             } elseif (in_array('Siswa SMP', $userRoles)) {
-                return redirect()->route('siswa.smp.index');
+                return redirect()->route('siswasmp.index');
             }
 
             return redirect()->route('home'); // Default redirect jika tidak ada role yang sesuai
