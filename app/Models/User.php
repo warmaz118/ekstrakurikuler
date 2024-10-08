@@ -10,7 +10,11 @@ class User extends Authenticatable
     use Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password'
+        'name', 'email', 'password', 'isactive',
+    ];
+
+    protected $casts = [
+        'isactive' => 'boolean',
     ];
 
     public function roles()

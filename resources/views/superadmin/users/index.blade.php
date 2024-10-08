@@ -1,6 +1,40 @@
 @extends('layouts.app')
 
 @section('content')
+
+<style>
+    .toggle {
+        width: 50px;
+        height: 24px;
+        background-color: red; /* Default color when inactive */
+        border-radius: 50px;
+        position: relative;
+        transition: background-color 0.3s;
+        border: none; /* Remove border for button */
+        outline: none; /* Remove outline on focus */
+        cursor: pointer; /* Pointer cursor on hover */
+    }
+
+    .toggle:before {
+        content: '';
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        transition: transform 0.3s;
+    }
+
+    .toggle.active {
+        background-color: green; /* Color when active */
+    }
+
+    .toggle.active:before {
+        transform: translateX(26px); /* Move to the right */
+    }
+</style>
 <!-- component -->
 <body class="antialiased font-sans bg-gray-200">
     <div class="container mx-auto px-4 sm:px-8">
@@ -12,6 +46,9 @@
                 <div class="flex flex-row mb-1 sm:mb-0">
                     <div class="relative">
                         <form method="GET" action="{{ route('superadmin.users.index') }}">
+                            <!-- Hidden input untuk status -->
+                            <input type="hidden" name="status" value="{{ request('status') }}">
+                        
                             <select name="per_page"
                                 class="appearance-none h-full rounded-l border block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                 onchange="this.form.submit()">
@@ -21,6 +58,7 @@
                             </select>
                         </form>
                         
+                        
                         <div
                             class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -28,20 +66,25 @@
                             </svg>
                         </div>
                     </div>
-                    <div class="relative">
-                        <select
-                            class="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
-                            <option>All</option>
-                            <option>Active</option>
-                            <option>Inactive</option>
-                        </select>
-                        <div
-                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                            </svg>
+                    <form method="GET" action="{{ route('superadmin.users.index') }}">
+                        <!-- Hidden input untuk per_page -->
+                        <input type="hidden" name="per_page" value="{{ request('per_page', 5) }}">
+                    
+                        <div class="relative">
+                            <select name="status" onchange="this.form.submit()"
+                                class="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
+                                <option value="All" {{ request('status') == 'All' ? 'selected' : '' }}>All</option>
+                                <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                                <option value="Not Active" {{ request('status') == 'Not Active' ? 'selected' : '' }}>Not Active</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                                </svg>
+                            </div>
                         </div>
-                    </div>
+                    </form>
+                    
                 </div>
                 <form method="GET" action="{{ route('superadmin.users.index') }}" class="block relative">
                     <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
@@ -101,6 +144,14 @@
                                 </th>
                                 <th
                                     class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Opsi Status
+                                </th>
+                                <th
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                     Action
                                 </th>
                             </tr>
@@ -146,6 +197,24 @@
                                     @endforeach
                                 </td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <span
+                                        class="relative inline-block px-3 py-1 font-semibold leading-tight">
+                                        <span aria-hidden
+                                            class="absolute inset-0 {{ $user->isactive ? 'bg-green-200' : 'bg-red-200' }} opacity-50 rounded-full"></span>
+                                        <span class="relative {{ $user->isactive ? 'text-green-900' : 'text-red-900' }}">
+                                            {{ $user->isactive ? 'Active' : 'Not Active' }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <form action="{{ route('users.toggleActive', $user->id) }}" method="POST">
+                                        @csrf
+                                        <button type="button" class="toggle {{ $user->isactive ? 'active' : '' }}" onclick="toggleActive(this, {{ $user->isactive ? 'true' : 'false' }})"></button>
+        <input type="hidden" name="isactive" value="{{ $user->isactive ? '0' : '1' }}">
+                                    </form>
+                                </td>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    
                                     <a href="{{ route('superadmin.users.show', $user->id) }}" class="text-gray-500 hover:text-gray-100 mr-2">
                                       <i class="material-icons-outlined text-base">visibility</i>
                                     </a>
@@ -193,6 +262,20 @@
             successMessage.style.display = 'none';
         }
     }, 5000); // 10000 ms = 10 detik
+
+    function toggleActive(button, currentStatus) {
+    const isActive = !currentStatus; // Toggle status
+
+    button.classList.toggle('active', isActive);
+    button.style.backgroundColor = isActive ? 'green' : 'red'; // Change color directly
+
+    // Update hidden input value
+    const form = button.closest('form');
+    form.querySelector('input[name="isactive"]').value = isActive ? '1' : '0';
+
+    // Submit the form to update the status
+    form.submit();
+}
 </script>
 
 

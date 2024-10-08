@@ -15,20 +15,30 @@ class SuperAdminUserController extends Controller
 {
     $perPage = $request->input('per_page', 5);
     $search = $request->input('search'); // Menerima input pencarian
+    $status = $request->input('status'); // Menerima input status
 
-    // Query pengguna dengan pagination dan pencarian
+    // Query pengguna dengan pagination, pencarian, dan filter status
     $users = User::with(['roles', 'divisi'])
         ->whereDoesntHave('roles', function ($query) {
-            $query->whereIn('name', ['Super Admin', 'Siswa SMP', 'Siswa SMA']);
+            $query->whereIn('name', ['Super Admin']);
         })
         ->when($search, function ($query, $search) {
             return $query->where('name', 'like', '%' . $search . '%')
                          ->orWhere('email', 'like', '%' . $search . '%');
         })
-        ->paginate($perPage); // Pagination, 10 item per halaman
+        ->when($status && $status != 'All', function ($query) use ($status) {
+            // Filter berdasarkan status aktif atau tidak aktif
+            if ($status == 'Active') {
+                return $query->where('isactive', 1);
+            } elseif ($status == 'Not Active') {
+                return $query->where('isactive', 0);
+            }
+        })
+        ->paginate($perPage); // Pagination
 
     return view('superadmin.users.index', compact('users'));
 }
+
 
     
 public function show(User $user)
@@ -113,5 +123,16 @@ public function update(Request $request, User $user)
     {
         $user->delete();
         return redirect()->route('superadmin.users.index')->with('success', 'User deleted successfully.');
+    }
+
+    public function toggleActive($id)
+    {
+        $user = User::find($id);
+        if ($user) {
+            $user->isactive = !$user->isactive; // Ubah status isactive
+            $user->save(); // Simpan perubahan
+            return redirect()->back()->with('success', 'Status pengguna berhasil diubah.');
+        }
+        return redirect()->back()->with('error', 'Pengguna tidak ditemukan.');
     }
 }

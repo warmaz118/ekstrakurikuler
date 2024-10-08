@@ -67,7 +67,7 @@ Route::prefix('superadmin')->middleware(['auth', 'role:Super Admin'])->group(fun
     Route::put('/users/{user}', [SuperAdminUserController::class, 'update'])->name('superadmin.users.update');
     Route::delete('/users/{user}', [SuperAdminUserController::class, 'destroy'])->name('superadmin.users.destroy');
     Route::get('superadmin/users/{user}', [SuperAdminUserController::class, 'show'])->name('superadmin.users.show');
-
+    Route::post('/users/{id}/toggle-active', [SuperAdminUserController::class, 'toggleActive'])->name('users.toggleActive');
 });
 
 // Route untuk membuat Pembimbing SMP
