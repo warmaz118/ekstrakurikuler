@@ -12,6 +12,9 @@
                 <div class="flex flex-row mb-1 sm:mb-0">
                     <div class="relative">
                         <form method="GET" action="{{ route('siswasmp.index') }}">
+                            <!-- Hidden input untuk status -->
+                            <input type="hidden" name="status" value="{{ request('status') }}">
+                        
                             <select name="per_page"
                                 class="appearance-none h-full rounded-l border block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                 onchange="this.form.submit()">
@@ -21,24 +24,32 @@
                             </select>
                         </form>
                         
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        
+                        <div
+                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                 <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                             </svg>
                         </div>
                     </div>
-                    <div class="relative">
-                        <select class="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                            <option>All</option>
-                            <option>Active</option>
-                            <option>Inactive</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                            </svg>
+                    <form method="GET" action="{{ route('siswasmp.index') }}">
+                        <!-- Hidden input untuk per_page -->
+                        <input type="hidden" name="per_page" value="{{ request('per_page', 5) }}">
+                    
+                        <div class="relative">
+                            <select name="status" onchange="this.form.submit()"
+                                class="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
+                                <option value="All" {{ request('status') == 'All' ? 'selected' : '' }}>All</option>
+                                <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                                <option value="Not Active" {{ request('status') == 'Not Active' ? 'selected' : '' }}>Not Active</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                                </svg>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
                 <form method="GET" action="{{ route('siswasmp.index') }}" class="block relative">
                     <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
@@ -94,6 +105,9 @@
                                 Alamat
                             </th>
                             <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Status
+                            </th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                 Divisi
                             </th>
                             <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -121,6 +135,16 @@
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                 {{ $item->alamat }}
+                            </td>
+                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                <span
+                                    class="relative inline-block px-3 py-1 font-semibold leading-tight">
+                                    <span aria-hidden
+                                        class="absolute inset-0 {{ $item->user->isactive ? 'bg-green-200' : 'bg-red-200' }} opacity-50 rounded-full"></span>
+                                    <span class="relative {{ $item->user->isactive ? 'text-green-900' : 'text-red-900' }}">
+                                        {{ $item->user->isactive ? 'Active' : 'Not Active' }}
+                                    </span>
+                                </span>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                 <span
@@ -165,7 +189,7 @@
                         Showing {{ $siswa->firstItem() }} to {{ $siswa->lastItem() }} of {{ $siswa->total() }} Entries
                     </span>
                     <div class="inline-flex mt-2 xs:mt-0">
-                        {{ $siswa->appends(['per_page' => request('per_page')])->links() }}
+                        {{ $siswa->appends(['per_page' => request('per_page'), 'status' => request('status'), 'search' => request('search')])->links() }}
                     </div>
                 </div>
             </div>

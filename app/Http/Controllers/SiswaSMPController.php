@@ -18,20 +18,35 @@ class SiswaSMPController extends Controller
     $perPage = $request->input('per_page', 5); // Default 5 item per halaman
     $search = $request->input('search'); // Menerima input pencarian
 
+    $status = $request->input('status');
+
     $siswa = Siswa::with(['user', 'divisi'])
-        ->whereHas('user.roles', function ($query) {
-            $query->where('name', 'Siswa SMP'); // Role Siswa SMP
-        })
-        ->whereHas('divisi', function ($query) {
-            $query->where('nama', 'SMP'); // Divisi SMP
-        })
-        ->when($search, function ($query, $search) {
-            return $query->whereHas('user', function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                      ->orWhere('email', 'like', '%' . $search . '%'); // Pencarian pada tabel users
+    ->whereHas('user.roles', function ($query) {
+        $query->where('name', 'Siswa SMP');
+    })
+    ->whereHas('divisi', function ($query) {
+        $query->where('nama', 'SMP');
+    })
+    ->when($search, function ($query, $search) {
+        return $query->whereHas('user', function ($query) use ($search) {
+            $query->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%');
+        });
+    })
+    ->when($status && $status != 'All', function ($query) use ($status) {
+        if ($status == 'Active') {
+            return $query->whereHas('user', function ($query) {
+                $query->where('isactive', 1);
             });
-        })
-        ->paginate($perPage); // Paginasi
+        } elseif ($status == 'Not Active') {
+            return $query->whereHas('user', function ($query) {
+                $query->where('isactive', 0);
+            });
+        }
+    })
+    ->paginate($perPage);
+
+
 
     return view('siswa.smp.index', compact('siswa'));
 }

@@ -239,7 +239,7 @@
                             Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} Entries
                         </span>
                         <div class="inline-flex mt-2 xs:mt-0">
-                            {{ $users->appends(['per_page' => request('per_page')])->links() }}
+                            {{ $users->appends(['per_page' => request('per_page'), 'status' => request('status'), 'search' => request('search')])->links() }}
                         </div>
                     </div>
                 </div>
