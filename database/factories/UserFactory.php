@@ -26,11 +26,18 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(function (User $user) {
             // Assign divisi_id (1 or 2) in user_divisi
-            $divisiId = Divisi::inRandomOrder()->first()->id;
-            $user->divisi()->attach([$divisiId]);
+            $divisi = Divisi::inRandomOrder()->first();
+            $user->divisi()->attach([$divisi->id]);
 
-            // Assign role_id (between 2 and 5) in role_user
-            $roleId = Role::whereBetween('id', [2, 5])->inRandomOrder()->first()->id;
+            // Assign role_id berdasarkan divisi_id
+            if ($divisi->id == 1) {
+                // Jika divisi_id 1, maka role_id dapat 2 atau 4
+                $roleId = Role::whereIn('id', [2, 4])->inRandomOrder()->first()->id;
+            } else {
+                // Jika divisi_id 2, maka role_id dapat 3 atau 5
+                $roleId = Role::whereIn('id', [3, 5])->inRandomOrder()->first()->id;
+            }
+
             $user->roles()->attach([$roleId]);
         });
     }

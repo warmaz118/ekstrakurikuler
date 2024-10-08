@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         DivisiTableSeeder::class,
         UsersTableSeeder::class,
         RoleUserTableSeeder::class,
+        SiswaSeeder::class
         
     ]);
 
