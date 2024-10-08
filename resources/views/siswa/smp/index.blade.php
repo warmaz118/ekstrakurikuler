@@ -165,20 +165,27 @@
                                 
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <a href="{{ route('siswasmp.show', $item->id) }}" class="text-gray-500 hover:text-gray-100 mr-2">
-                                  <i class="material-icons-outlined text-base">visibility</i>
-                                </a>
-                                <a href="{{ route('siswasmp.edit', $item->id) }}" class="text-blue-500 hover:text-blue-700 mr-2">
-                                    <i class="material-icons-outlined text-base">edit</i>
-                                </a>
-                                <form action="{{ route('siswasmp.destroy', $item->id) }}" method="POST" class="inline-block">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                        <i class="material-icons-outlined text-base">delete</i>
-                                    </button>
-                                </form>
+                                <div class="relative inline-block text-left">
+                                    <div>
+                                        <button type="button" class="menu-button inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
+                                            <i class="material-icons-outlined">more_vert</i> <!-- Ikon tiga titik -->
+                                        </button>
+                                    </div>
+                            
+                                    <div class="menu-dropdown absolute right-0 z-10 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden" role="menu" aria-orientation="vertical" tabindex="-1">
+                                        <div class="py-1" role="none">
+                                            <a href="{{ route('siswasmp.show', $item->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Lihat</a>
+                                            <a href="{{ route('siswasmp.edit', $item->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Edit</a>
+                                            <form action="{{ route('siswasmp.destroy', $item->id) }}" method="POST" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="w-full text-left">Hapus</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
+                            
                         </tr>
                         @endforeach
                     </tbody>
@@ -210,6 +217,27 @@
             successMessage.style.display = 'none';
         }
     }, 3000); // 10000 ms = 10 detik
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const menuButtons = document.querySelectorAll('.menu-button');
+        const menuDropdowns = document.querySelectorAll('.menu-dropdown');
+
+        menuButtons.forEach((button, index) => {
+            button.addEventListener('click', function () {
+                // Toggle dropdown yang sesuai
+                menuDropdowns[index].classList.toggle('hidden');
+            });
+        });
+
+        // Menutup dropdown jika klik di luar menu
+        window.addEventListener('click', function (e) {
+            if (!e.target.closest('.relative')) {
+                menuDropdowns.forEach(dropdown => {
+                    dropdown.classList.add('hidden');
+                });
+            }
+        });
+    });
 </script>
 @endsection
 
