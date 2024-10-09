@@ -11,8 +11,11 @@ class CreateEkskulTable extends Migration
         Schema::create('ekskul', function (Blueprint $table) {
             $table->id();
             $table->foreignId('divisi_id')->constrained('divisi')->onDelete('cascade');
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('lokasi');
+            $table->text('deskripsi');
+            $table->unsignedInteger('kapasitas')->default(0); // Kapasitas maksimal peserta ekskul
+            $table->unsignedInteger('jumlah_peserta')->default(0); // Jumlah peserta yang terdaftar
             $table->timestamps();
         });
     }

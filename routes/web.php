@@ -1,18 +1,20 @@
 <?php
 
-use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\EkskulController;
 use App\Http\Controllers\AdminSMAController;
 use App\Http\Controllers\AdminSMPController;
 use App\Http\Controllers\SiswaSMAController;
 use App\Http\Controllers\SiswaSMPController;
 use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\AnggotaEkskulController;
 use App\Http\Controllers\PembimbingSMAController;
 use App\Http\Controllers\PembimbingSMPController;
 use App\Http\Controllers\SuperAdminUserController;
-use App\Http\Controllers\SiswaController;
 
 
 
@@ -56,6 +58,11 @@ Route::get('/home', function () {
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
 Route::post('login', [AuthController::class, 'login'])->middleware('guest');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
+
+Route::resource('ekskul', EkskulController::class);
+
+
 
 // Rute yang dilindungi untuk membuat Users Admin dan Pembimbing
 Route::prefix('superadmin')->middleware(['auth', 'role:Super Admin'])->group(function () {

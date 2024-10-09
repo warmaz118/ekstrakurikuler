@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ekskul extends Model
 {
-    protected $fillable = ['divisi_id', 'name', 'hari', 'jam', 'lokasi'];
+    protected $table = 'ekskul';
+    protected $fillable = ['divisi_id', 'name', 'deskripsi', 'lokasi', 'kapasitas', 'jumlah_peserta'];
 
     public function divisi()
     {
@@ -14,9 +15,10 @@ class Ekskul extends Model
     }
 
     public function pembimbing()
-    {
-        return $this->belongsToMany(User::class, 'ekskul_pembimbing');
-    }
+{
+    return $this->belongsToMany(User::class, 'ekskul_pembimbing', 'ekskul_id', 'pembimbing_id');
+}
+
 
     public function siswa()
     {

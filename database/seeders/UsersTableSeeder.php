@@ -42,7 +42,7 @@ class UsersTableSeeder extends Seeder
             User::create($userData);
         }
 
-        User::factory()->count(50)->create();
+        User::factory()->count(10)->create();
 
     }
 }

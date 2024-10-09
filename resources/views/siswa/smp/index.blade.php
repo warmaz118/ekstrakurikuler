@@ -26,7 +26,7 @@
                         
                         
                         <div
-                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-700">
                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                 <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                             </svg>
@@ -43,7 +43,7 @@
                                 <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
                                 <option value="Not Active" {{ request('status') == 'Not Active' ? 'selected' : '' }}>Not Active</option>
                             </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-700">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                                 </svg>
@@ -219,25 +219,33 @@
     }, 3000); // 10000 ms = 10 detik
 
     document.addEventListener('DOMContentLoaded', function () {
-        const menuButtons = document.querySelectorAll('.menu-button');
-        const menuDropdowns = document.querySelectorAll('.menu-dropdown');
+    const menuButtons = document.querySelectorAll('.menu-button');
+    const menuDropdowns = document.querySelectorAll('.menu-dropdown');
 
-        menuButtons.forEach((button, index) => {
-            button.addEventListener('click', function () {
-                // Toggle dropdown yang sesuai
-                menuDropdowns[index].classList.toggle('hidden');
-            });
-        });
+    menuButtons.forEach((button, index) => {
+        button.addEventListener('click', function (event) {
+            // Mencegah klik pada tombol dari menutup dropdown
+            event.stopPropagation();
 
-        // Menutup dropdown jika klik di luar menu
-        window.addEventListener('click', function (e) {
-            if (!e.target.closest('.relative')) {
-                menuDropdowns.forEach(dropdown => {
+            // Tutup semua dropdown lainnya
+            menuDropdowns.forEach((dropdown, idx) => {
+                if (index !== idx) {
                     dropdown.classList.add('hidden');
-                });
-            }
+                }
+            });
+
+            // Toggle dropdown yang sesuai
+            menuDropdowns[index].classList.toggle('hidden');
         });
     });
+
+    // Menutup dropdown jika klik di luar menu
+    window.addEventListener('click', function () {
+        menuDropdowns.forEach(dropdown => {
+            dropdown.classList.add('hidden');
+        });
+    });
+});
 </script>
 @endsection
 

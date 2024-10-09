@@ -53,7 +53,7 @@
             </div>
         @endif
 
-        <form action="{{ route('siswasma.update', $siswa->id) }}" method="POST">
+        <form action="{{ route('siswasmp.update', $siswa->id) }}" method="POST">
 
             @csrf
             @method('PUT')

@@ -60,7 +60,7 @@
                         
                         
                         <div
-                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-700">
                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                 <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                             </svg>
@@ -77,7 +77,7 @@
                                 <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
                                 <option value="Not Active" {{ request('status') == 'Not Active' ? 'selected' : '' }}>Not Active</option>
                             </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-700">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                                 </svg>
@@ -214,21 +214,26 @@
                                     </form>
                                 </td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                    
-                                    <a href="{{ route('superadmin.users.show', $user->id) }}" class="text-gray-500 hover:text-gray-100 mr-2">
-                                      <i class="material-icons-outlined text-base">visibility</i>
-                                    </a>
-                                    <a href="{{ route('superadmin.users.edit', $user->id) }}" class="text-yellow-400 hover:text-gray-100 mx-2">
-                                      <i class="material-icons-outlined text-base">edit</i>
-                                    </a>
-                                    <form action="{{ route('superadmin.users.destroy', $user->id) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                            <button type="submit" class="text-red-400 hover:text-gray-100 ml-2">
-                                                <i class="material-icons-round text-base">delete_outline</i>
+                                    <div class="relative inline-block text-left">
+                                        <div>
+                                            <button type="button" class="menu-button inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
+                                                <i class="material-icons-outlined">more_vert</i> <!-- Ikon tiga titik -->
                                             </button>
-                                  </form>
-                                  </td>
+                                        </div>
+                                
+                                        <div class="menu-dropdown absolute right-0 z-10 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden" role="menu" aria-orientation="vertical" tabindex="-1">
+                                            <div class="py-1" role="none">
+                                                <a href="{{ route('superadmin.users.show', $user->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Lihat</a>
+                                                <a href="{{ route('superadmin.users.edit', $user->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Edit</a>
+                                                <form action="{{ route('superadmin.users.destroy', $user->id) }}" method="POST" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="w-full text-left">Hapus</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                            @endforeach
                         </tbody>
@@ -276,6 +281,34 @@
     // Submit the form to update the status
     form.submit();
 }
+document.addEventListener('DOMContentLoaded', function () {
+    const menuButtons = document.querySelectorAll('.menu-button');
+    const menuDropdowns = document.querySelectorAll('.menu-dropdown');
+
+    menuButtons.forEach((button, index) => {
+        button.addEventListener('click', function (event) {
+            // Mencegah klik pada tombol dari menutup dropdown
+            event.stopPropagation();
+
+            // Tutup semua dropdown lainnya
+            menuDropdowns.forEach((dropdown, idx) => {
+                if (index !== idx) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+
+            // Toggle dropdown yang sesuai
+            menuDropdowns[index].classList.toggle('hidden');
+        });
+    });
+
+    // Menutup dropdown jika klik di luar menu
+    window.addEventListener('click', function () {
+        menuDropdowns.forEach(dropdown => {
+            dropdown.classList.add('hidden');
+        });
+    });
+});
 </script>
 
 

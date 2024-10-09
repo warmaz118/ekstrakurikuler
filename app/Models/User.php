@@ -33,4 +33,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Siswa::class);
     }
+    public function ekskul()
+{
+    return $this->belongsToMany(Ekskul::class, 'ekskul_pembimbing', 'pembimbing_id', 'ekskul_id');
+}
+
 }
