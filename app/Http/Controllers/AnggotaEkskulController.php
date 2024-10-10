@@ -46,6 +46,27 @@ public function getEkskulByDivisi($divisiId)
 }
 
 
+public function getSiswaByDivisi($divisiId)
+{
+    // Ambil siswa berdasarkan divisi_id dan join dengan tabel users untuk mengambil nama siswa
+    $siswas = Siswa::where('divisi_id', $divisiId)
+        ->with('user:id,name') // Eager load relasi ke tabel users untuk ambil id dan name
+        ->get();
+
+    // Map data untuk mengembalikan data yang sesuai untuk JSON response
+    $data = $siswas->map(function($siswa) {
+        return [
+            'id' => $siswa->id,
+            'name' => $siswa->user->name . ' - ' . ' Kelas ' . $siswa->kelas, // Gabungkan nama siswa dengan kelas
+        ];
+    });
+
+    return response()->json($data);
+}
+
+
+
+
 
 
 

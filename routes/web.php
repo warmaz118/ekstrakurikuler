@@ -63,6 +63,7 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 Route::resource('ekskul', EkskulController::class);
 Route::resource('siswaekskul', AnggotaEkskulController::class);
 Route::get('/ekskul/divisi/{divisiId}', [AnggotaEkskulController::class, 'getEkskulByDivisi']);
+Route::get('/siswa/divisi/{divisiId}', [AnggotaEkskulController::class, 'getSiswaByDivisi']);
 
 
 

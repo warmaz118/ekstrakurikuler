@@ -13,24 +13,20 @@
                     <select id="divisi_id" name="divisi_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                         <option value="">Pilih Divisi</option>
                         @foreach($divisis as $divisi)
-                            <option value="{{ $divisi->id }}">{{ $divisi->nama }}</option> <!-- Ganti 'nama' dengan field yang sesuai -->
+                            <option value="{{ $divisi->id }}">{{ $divisi->nama }}</option>
                         @endforeach
                     </select>
                 </div>
                 
                 <div class="relative z-0 w-36 mb-5">
-                    <select id="ekskul_id" name="pembimbing_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" disabled>
+                    <select id="ekskul_id" name="ekskul_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" disabled>
                         <option value="">Pilih Ekskul</option>
                     </select>
                 </div>
                 
-
                 <div class="relative z-0 w-96 mb-5">
-                    <select id="countries" name="pembimbing_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                    <select id="siswa_id" name="siswa_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" disabled>
                         <option value="">Pilih Siswa</option>
-                            <option value="">Siswa SMP </option>
-                            <option value="">Siswa SMP 1</option>
-                            <option value="">Siswa SMP 2</option>
                     </select>
                 </div>
             </div>
@@ -167,31 +163,50 @@
 
     
     document.getElementById('divisi_id').addEventListener('change', function() {
-        var divisiId = this.value;
-        var ekskulSelect = document.getElementById('ekskul_id');
-        
-        // Reset dropdown ekskul
-        ekskulSelect.innerHTML = '<option value="">Pilih Ekskul</option>';
-        ekskulSelect.disabled = true; // Disable dropdown ekskul sampai data diambil
+    var divisiId = this.value;
+    var ekskulSelect = document.getElementById('ekskul_id');
+    var siswaSelect = document.getElementById('siswa_id');
 
-        if (divisiId) {
-            fetch(`/ekskul/divisi/${divisiId}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(ekskul => {
-                        var option = document.createElement('option');
-                        option.value = ekskul.id;
-                        option.textContent = ekskul.name; // Ganti 'name' dengan field yang sesuai
-                        ekskulSelect.appendChild(option);
-                    });
-                    ekskulSelect.disabled = false; // Enable dropdown ekskul setelah data diisi
-                })
-                .catch(error => {
-                    console.error('Error fetching ekskul:', error);
+    // Reset dropdown ekskul dan siswa
+    ekskulSelect.innerHTML = '<option value="">Pilih Ekskul</option>';
+    ekskulSelect.disabled = true; // Disable dropdown ekskul
+    siswaSelect.innerHTML = '<option value="">Pilih Siswa</option>';
+    siswaSelect.disabled = true; // Disable dropdown siswa
+
+    if (divisiId) {
+        // Ambil ekskul berdasarkan divisi
+        fetch(`/ekskul/divisi/${divisiId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(ekskul => {
+                    var option = document.createElement('option');
+                    option.value = ekskul.id;
+                    option.textContent = ekskul.name; // Ganti dengan field yang sesuai
+                    ekskulSelect.appendChild(option);
                 });
-        }
-    });
-
+                ekskulSelect.disabled = false; // Enable dropdown ekskul setelah data diisi
+            })
+            .catch(error => {
+                console.error('Error fetching ekskul:', error);
+            });
+        
+        // Ambil siswa berdasarkan divisi
+        fetch(`/siswa/divisi/${divisiId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(siswa => {
+                    var option = document.createElement('option');
+                    option.value = siswa.id; // Ganti dengan field yang sesuai
+                    option.textContent = siswa.name; // Ganti dengan field yang sesuai
+                    siswaSelect.appendChild(option);
+                });
+                siswaSelect.disabled = false; // Enable dropdown siswa setelah data diisi
+            })
+            .catch(error => {
+                console.error('Error fetching siswa:', error);
+            });
+    }
+});
 
 </script>
 @endsection
