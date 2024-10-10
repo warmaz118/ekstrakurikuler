@@ -38,9 +38,9 @@ class AuthController extends Controller
                 case 'Admin SMA':
                     return redirect()->route('adminsma.index');
                 case 'Pembimbing SMP':
-                    return redirect()->route('pembimbingsmp.index');
+                    return redirect()->route('siswaekskul.index');
                 case 'Pembimbing SMA':
-                    return redirect()->route('pembimbingsma.index');
+                    return redirect()->route('siswaekskul.index');
                 case 'Siswa SMP':
                     return redirect()->route('siswasmp.index');
                 case 'Siswa SMA':
