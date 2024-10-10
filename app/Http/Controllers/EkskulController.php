@@ -11,7 +11,7 @@ class EkskulController extends Controller
 {
     public function index(Request $request)
 {
-    $perPage = $request->get('per_page', 10); // Ambil jumlah per halaman dari query string atau default 10
+    $perPage = $request->get('per_page', 5); // Ambil jumlah per halaman dari query string atau default 10
 
     $ekskuls = Ekskul::with('pembimbing')
         ->when($request->search, function ($query) use ($request) {
@@ -44,10 +44,11 @@ class EkskulController extends Controller
     ]);
 
     // Set default jumlah_peserta ke 0
-    $data = $request->all();
+    $data = $request->except('pembimbing_id');
     $data['jumlah_peserta'] = 0;
 
-    Ekskul::create($data);
+    $ekskul = Ekskul::create($data);
+    $ekskul->pembimbing()->attach($request->pembimbing_id);
 
     return redirect()->route('ekskul.index')->with('success', 'Ekskul berhasil ditambahkan.');
 }
