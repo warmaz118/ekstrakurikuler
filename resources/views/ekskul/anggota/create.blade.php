@@ -29,45 +29,9 @@
                         <option value="">Pilih Siswa</option>
                     </select>
                 </div>
-            </div>
-            <div class="my-2 flex sm:flex-row flex-col">
-                <div class="flex flex-row mb-1 sm:mb-0">
-                    <div class="relative">
-                        <form method="GET" action="{{ route('ekskul.index') }}">
-                            <!-- Hidden input untuk status -->
-                            <input type="hidden" name="status" value="{{ request('status') }}">
-                        
-                            <select name="per_page"
-                                class="appearance-none h-full rounded-l border block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                onchange="this.form.submit()">
-                                <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
-                                <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                                <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
-                            </select>
-                        </form>
-                        
-                        
-                        <div
-                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-700">
-                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                            </svg>
-                        </div>
-                    </div>
-                    
-                </div>
-                <form method="GET" action="{{ route('ekskul.index') }}" class="block relative">
-                    <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
-                        <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current text-gray-500">
-                            <path d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z">
-                            </path>
-                        </svg>
-                    </span>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search"
-                        class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none" />
-                </form>
                 
-            </div> 
+            </div>
+          
         </div>
         <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 overflow-x-auto">
             <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
@@ -227,6 +191,10 @@ document.getElementById('siswa_id').addEventListener('change', function() {
 
         siswaCounter++;
 
+         // Nonaktifkan dropdown divisi dan ekskul setelah menambah siswa
+         document.getElementById('divisi_id').disabled = true;
+        document.getElementById('ekskul_id').disabled = true;
+
         // Reset dropdown siswa setelah menambahkan siswa ke tabel
         this.value = '';
     }
@@ -256,6 +224,13 @@ function updateSiswaCounter() {
 
     // Reset penghitung total siswa
     siswaCounter = newCounter; 
+
+    // Aktifkan kembali dropdown jika tidak ada siswa di tabel
+    if (newCounter === 1) { // Jika tidak ada siswa, berarti ada 1 baris kosong (header)
+        document.getElementById('divisi_id').disabled = false; // Aktifkan dropdown divisi
+        document.getElementById('ekskul_id').disabled = true; // Nonaktifkan dropdown ekskul
+        document.getElementById('siswa_id').disabled = true; // Nonaktifkan dropdown siswa
+    }
 }
 
 
