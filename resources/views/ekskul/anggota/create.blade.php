@@ -83,52 +83,20 @@
                     </div>
                 @endif
                 
-                <table class="min-w-full leading-normal">
-                    <thead>
+                
+                <table id="siswaTable" class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Nama
-                            </th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Kelas
-                            </th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Divisi
-                            </th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Ekskul
-                            </th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Pembimbing
-                            </th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Aksi
-                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nis</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama - Kelas</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Divisi</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                Siswa SMP
-                            </td>
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                8
-                            </td>
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                SMP
-                            </td>
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                Futsal
-                            </td>
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                Pembimbing
-                            </td>
-                           
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <button type="submit">Hapus</button>
-                            </td>
-                            
-                        </tr>
+                    <tbody id="siswaTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Baris siswa yang dipilih akan muncul di sini -->
                     </tbody>
                 </table>
                 
@@ -142,18 +110,6 @@
                     </div>
                 </div>
                 
-                <table id="siswaTable" class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIS</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="siswaTableBody" class="bg-white divide-y divide-gray-200">
-                        <!-- Baris siswa yang dipilih akan muncul di sini -->
-                    </tbody>
-                </table>
                 
                 
             </div>
@@ -212,6 +168,9 @@
                     var option = document.createElement('option');
                     option.value = siswa.id; // Ganti dengan field yang sesuai
                     option.textContent = siswa.name; // Ganti dengan field yang sesuai
+                    option.setAttribute('data-email', siswa.email);
+                    option.setAttribute('data-nis', siswa.nis);
+                    option.setAttribute('data-divisi', siswa.divisi);
                     siswaSelect.appendChild(option);
                 });
                 siswaSelect.disabled = false; // Enable dropdown siswa setelah data diisi
@@ -222,9 +181,14 @@
     }
 });
 
+let siswaCounter = 1; // Inisialisasi penghitung siswa
+
 document.getElementById('siswa_id').addEventListener('change', function() {
     var siswaId = this.value;
     var siswaName = this.options[this.selectedIndex].text;
+    var siswaEmail = this.options[this.selectedIndex].getAttribute('data-email');
+    var siswaNis = this.options[this.selectedIndex].getAttribute('data-nis');
+    var siswaDivisi = this.options[this.selectedIndex].getAttribute('data-divisi');
     
     // Pastikan siswa tidak sudah ada di tabel sebelum menambahkannya
     if (siswaId) {
@@ -234,22 +198,34 @@ document.getElementById('siswa_id').addEventListener('change', function() {
             return;
         }
 
+        // Mengambil email siswa dari data yang diambil di server sebelumnya (asumsinya data sudah dimuat)
+
         // Menambahkan baris baru ke tabel
         var tableBody = document.getElementById('siswaTableBody');
         var row = document.createElement('tr');
         row.setAttribute('data-siswa-id', siswaId);
 
-        // Menambahkan kolom NIS, Nama, dan aksi hapus
+        // Menambahkan kolom NIS, Nama, Email, dan aksi hapus
         row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${siswaId}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${siswaCounter}</td> <!-- Tampilkan Nomor -->
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${siswaNis}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${siswaName}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button class="text-red-600 hover:text-red-900 remove-siswa" data-siswa-id="${siswaId}">Hapus</button>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${siswaDivisi}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${siswaEmail}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button 
+    class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700 transition duration-300 ease-in-out remove-siswa" 
+    data-siswa-id="${siswaId}">
+    Hapus
+</button>
+
             </td>
         `;
 
         // Tambahkan baris ke dalam tabel
         tableBody.appendChild(row);
+
+        siswaCounter++;
 
         // Reset dropdown siswa setelah menambahkan siswa ke tabel
         this.value = '';
@@ -257,17 +233,32 @@ document.getElementById('siswa_id').addEventListener('change', function() {
 });
 
 
-document.getElementById('siswaTable').addEventListener('click', function(event) {
+
+document.getElementById('siswaTableBody').addEventListener('click', function(event) {
     if (event.target.classList.contains('remove-siswa')) {
-        var siswaId = event.target.getAttribute('data-siswa-id');
-        
-        // Hapus baris siswa dari tabel
-        var row = document.querySelector(`#siswaTableBody tr[data-siswa-id="${siswaId}"]`);
-        if (row) {
-            row.remove();
-        }
+        var row = event.target.closest('tr');
+        row.remove(); // Hapus baris
+
+        // Perbarui nomor urut setelah penghapusan
+        updateSiswaCounter(); // Panggil fungsi untuk memperbarui nomor urut
     }
 });
+
+// Fungsi untuk memperbarui nomor urut
+function updateSiswaCounter() {
+    let rows = document.querySelectorAll('#siswaTableBody tr');
+    let newCounter = 1; // Reset penghitung
+
+    rows.forEach(function(row) {
+        row.cells[0].textContent = newCounter; // Update nomor urut
+        newCounter++; // Increment penghitung
+    });
+
+    // Reset penghitung total siswa
+    siswaCounter = newCounter; 
+}
+
+
 
 
 // Ambil data siswa saat form dikirim
