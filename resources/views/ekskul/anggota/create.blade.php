@@ -131,6 +131,7 @@
                         </tr>
                     </tbody>
                 </table>
+                
                 <!-- Paginasi -->
                 <div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
                     <span class="text-xs xs:text-sm text-gray-900">
@@ -140,6 +141,19 @@
                         {{-- {{ $ekskuls->appends(['per_page' => request('per_page'), 'status' => request('status'), 'search' => request('search')])->links() }} --}}
                     </div>
                 </div>
+                
+                <table id="siswaTable" class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIS</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="siswaTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Baris siswa yang dipilih akan muncul di sini -->
+                    </tbody>
+                </table>
                 
                 
             </div>
@@ -207,6 +221,76 @@
             });
     }
 });
+
+document.getElementById('siswa_id').addEventListener('change', function() {
+    var siswaId = this.value;
+    var siswaName = this.options[this.selectedIndex].text;
+    
+    // Pastikan siswa tidak sudah ada di tabel sebelum menambahkannya
+    if (siswaId) {
+        var existingRow = document.querySelector(`#siswaTableBody tr[data-siswa-id="${siswaId}"]`);
+        if (existingRow) {
+            alert('Siswa sudah ada di dalam tabel!');
+            return;
+        }
+
+        // Menambahkan baris baru ke tabel
+        var tableBody = document.getElementById('siswaTableBody');
+        var row = document.createElement('tr');
+        row.setAttribute('data-siswa-id', siswaId);
+
+        // Menambahkan kolom NIS, Nama, dan aksi hapus
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${siswaId}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${siswaName}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <button class="text-red-600 hover:text-red-900 remove-siswa" data-siswa-id="${siswaId}">Hapus</button>
+            </td>
+        `;
+
+        // Tambahkan baris ke dalam tabel
+        tableBody.appendChild(row);
+
+        // Reset dropdown siswa setelah menambahkan siswa ke tabel
+        this.value = '';
+    }
+});
+
+
+document.getElementById('siswaTable').addEventListener('click', function(event) {
+    if (event.target.classList.contains('remove-siswa')) {
+        var siswaId = event.target.getAttribute('data-siswa-id');
+        
+        // Hapus baris siswa dari tabel
+        var row = document.querySelector(`#siswaTableBody tr[data-siswa-id="${siswaId}"]`);
+        if (row) {
+            row.remove();
+        }
+    }
+});
+
+
+// Ambil data siswa saat form dikirim
+document.querySelector('form').addEventListener('submit', function(event) {
+    var tableBody = document.getElementById('siswaTableBody');
+    var siswaIds = [];
+
+    // Loop melalui setiap baris di tabel untuk mengambil siswa_id
+    tableBody.querySelectorAll('tr').forEach(function(row) {
+        var siswaId = row.getAttribute('data-siswa-id');
+        siswaIds.push(siswaId);
+    });
+
+    // Buat input hidden dan tambahkan ke dalam form untuk setiap siswa_id
+    siswaIds.forEach(function(siswaId) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'siswa_ids[]'; // Name sesuai dengan array siswa di backend
+        input.value = siswaId;
+        document.querySelector('form').appendChild(input);
+    });
+});
+
 
 </script>
 @endsection
