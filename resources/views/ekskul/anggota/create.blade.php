@@ -47,7 +47,6 @@
                     </div>
                 @endif
                 
-                
                 <table id="siswaTable" class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -74,8 +73,6 @@
                     </div>
                 </div>
                 
-                
-                
             </div>
         </div>
     </div>
@@ -95,7 +92,6 @@
         }
     }, 3000); // 10000 ms = 10 detik
 
-    
     document.getElementById('divisi_id').addEventListener('change', function() {
     var divisiId = this.value;
     var ekskulSelect = document.getElementById('ekskul_id');
@@ -177,14 +173,10 @@ document.getElementById('siswa_id').addEventListener('change', function() {
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${siswaDivisi}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${siswaEmail}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button 
-    class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700 transition duration-300 ease-in-out remove-siswa" 
-    data-siswa-id="${siswaId}">
-    Hapus
-</button>
-
-            </td>
-        `;
+                <button class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700 transition duration-300 ease-in-out remove-siswa" 
+                        data-siswa-id="${siswaId}"> Hapus
+                </button>
+            </td> `;
 
         // Tambahkan baris ke dalam tabel
         tableBody.appendChild(row);
@@ -199,8 +191,6 @@ document.getElementById('siswa_id').addEventListener('change', function() {
         this.value = '';
     }
 });
-
-
 
 document.getElementById('siswaTableBody').addEventListener('click', function(event) {
     if (event.target.classList.contains('remove-siswa')) {
@@ -233,9 +223,6 @@ function updateSiswaCounter() {
     }
 }
 
-
-
-
 // Ambil data siswa saat form dikirim
 document.querySelector('form').addEventListener('submit', function(event) {
     var tableBody = document.getElementById('siswaTableBody');
@@ -256,11 +243,5 @@ document.querySelector('form').addEventListener('submit', function(event) {
         document.querySelector('form').appendChild(input);
     });
 });
-
-
 </script>
 @endsection
-
-
-
-
